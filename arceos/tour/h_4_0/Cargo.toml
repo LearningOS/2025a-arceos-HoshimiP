@@ -9,5 +9,5 @@ axstd = { workspace = true, features = ["alloc", "paging", "fs", "multitask", "i
 axhal = { workspace = true }
 axmm = { workspace = true }
 riscv_vcpu = { path = "../../modules/riscv_vcpu" }
-axerrno = "0.1"
+axerrno = "=0.1.0"
 memory_addr = "0.3"

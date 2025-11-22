@@ -29,7 +29,7 @@ dummy-if-not-enabled = []
 
 [dependencies]
 axio = "0.1"
-axerrno = "=0.1"
+axerrno = "=0.1.0"
 axfeat = { workspace = true }
 axruntime = { workspace = true }
 axconfig = { workspace = true }

@@ -79,7 +79,7 @@ axfeat = { workspace = true }
 arceos_api = { workspace = true }
 axhal = { workspace = true }
 axio = "0.1"
-axerrno = "0.1"
+axerrno = "=0.1.0"
 kspin = "0.1"
 axalloc = { workspace = true }
 hashbrown = "0.14"

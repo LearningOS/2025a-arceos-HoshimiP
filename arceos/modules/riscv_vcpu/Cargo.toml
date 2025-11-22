@@ -16,7 +16,7 @@ sbi-rt = { version = "0.0.2", features = ["integer-impls", "legacy"] }
 tock-registers = "0.8.1"
 memoffset = { version = ">=0.6.5", features = ["unstable_const"] }
 
-axerrno = "0.1.0"
+axerrno = "=0.1.0"
 #page_table_entry = "0.3.3"
 memory_addr = "0.3"
 axhal = { workspace = true }

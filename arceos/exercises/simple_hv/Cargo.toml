@@ -9,7 +9,7 @@ axhal = { workspace = true }
 axmm = { workspace = true }
 axtask = { workspace = true }
 axsync = { workspace = true }
-axerrno = "0.1"
+axerrno = "=0.1.0"
 sbi-spec = { version = "0.0.6", features = ["legacy"] }
 riscv = { git = "https://github.com/rcore-os/riscv", features = ["inline-asm"] }
 sbi-rt = { version = "0.0.2", features = ["integer-impls", "legacy"] }

@@ -45,7 +45,7 @@ axnet = { workspace = true, optional = true }
 
 # Other crates
 axio = "0.1"
-axerrno = "=0.1"
+axerrno = "=0.1.0"
 flatten_objects = "0.1"
 static_assertions = "1.1.0"
 spin = { version = "0.9" }
