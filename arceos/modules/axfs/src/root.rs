@@ -133,13 +133,23 @@ impl VfsNodeOps for RootDirectory {
     }
 
     fn rename(&self, src_path: &str, dst_path: &str) -> VfsResult {
-        self.lookup_mounted_fs(src_path, |fs, rest_path| {
+        let (fs_src, src_rest) = self.lookup_mounted_fs(src_path, |fs, rest_path| {
             if rest_path.is_empty() {
                 ax_err!(PermissionDenied) // cannot rename mount points
             } else {
-                fs.root_dir().rename(rest_path, dst_path)
+                Ok((Arc::clone(&fs), String::from(rest_path)))
             }
-        })
+        })?;
+
+        let dst_rest = self.lookup_mounted_fs(dst_path, |fs_dst, rest_path| {
+            if Arc::ptr_eq(&fs_src, &fs_dst) {
+                Ok(String::from(rest_path))
+            } else {
+                ax_err!(InvalidInput)
+            }
+        })?;
+
+        fs_src.root_dir().rename(&src_rest, &dst_rest)
     }
 }
 

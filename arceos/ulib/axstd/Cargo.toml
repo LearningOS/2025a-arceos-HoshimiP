@@ -82,3 +82,4 @@ axio = "0.1"
 axerrno = "0.1"
 kspin = "0.1"
 axalloc = { workspace = true }
+hashbrown = "0.14"

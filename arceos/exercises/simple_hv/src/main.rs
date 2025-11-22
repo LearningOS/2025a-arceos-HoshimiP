@@ -142,5 +142,7 @@ fn prepare_guest_context(ctx: &mut VmCpuRegisters) {
     sstatus.set_spp(sstatus::SPP::Supervisor);
     ctx.guest_regs.sstatus = sstatus.bits();
     // Return to entry to start vm.
-    ctx.guest_regs.sepc = VM_ENTRY;
+    ctx.guest_regs.sepc = VM_ENTRY + 8;
+    ctx.guest_regs.gprs.set_reg(regs::GprIndex::A0, 0x6688);
+    ctx.guest_regs.gprs.set_reg(regs::GprIndex::A1, 0x1234);
 }

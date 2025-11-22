@@ -7,7 +7,8 @@ use axerrno::LinuxError;
 use axtask::current;
 use axtask::TaskExtRef;
 use axhal::paging::MappingFlags;
-use arceos_posix_api as api;
+use arceos_posix_api::{self as api, get_file_like};
+use memory_addr::{VirtAddr, PAGE_SIZE_4K};
 
 const SYS_IOCTL: usize = 29;
 const SYS_OPENAT: usize = 56;
@@ -140,7 +141,42 @@ fn sys_mmap(
     fd: i32,
     _offset: isize,
 ) -> isize {
-    unimplemented!("no sys_mmap!");
+    let current = current();
+    let aspace = current.task_ext().aspace.clone();
+    let mut aspace = aspace.lock();
+    let hint = VirtAddr::from(addr as usize + 0x20_0000);
+    let limit = memory_addr::VirtAddrRange::from_start_size(VirtAddr::from(0), aspace.size());
+    let v = aspace.find_free_area(hint, length, limit).unwrap();
+
+    let aligned_start = VirtAddr::from_usize(v.as_usize() & !(PAGE_SIZE_4K - 1));
+    let aligned_len = (length + PAGE_SIZE_4K - 1) & !(PAGE_SIZE_4K - 1);
+
+    let mprot = MmapProt::from_bits_truncate(prot);
+    let mapping_flags = mprot.into();
+    if aspace.map_alloc(aligned_start, aligned_len, mapping_flags, true).is_err() {
+        return -1
+    }
+    let f = get_file_like(fd).unwrap();
+    let mut len = length;
+    let mut off = 0usize;
+    let mut buf = [0u8; PAGE_SIZE_4K];
+    while len > 0 {
+        let read_res = f.read(&mut buf[..len]);
+        match read_res {
+            Ok(0) => break,
+            Ok(n) => {
+                if aspace.write(aligned_start + off, &buf[..n]).is_err() {
+                    return -1;
+                }
+                len -= n;
+                off += n;
+
+            },
+            Err(_) => return -1,
+        }
+    }
+
+    aligned_start.as_usize() as isize
 }
 
 fn sys_openat(dfd: c_int, fname: *const c_char, flags: c_int, mode: api::ctypes::mode_t) -> isize {
